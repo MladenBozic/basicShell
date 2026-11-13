@@ -7,8 +7,11 @@
 
 #pragma once
 #include <string>
+#include <vector>
 using namespace std;    
 
 void echoText(string message);
+
+string listALL(vector<string> parsedInput);
 
 #endif //UNTITLED17_ECHO_H

@@ -2,12 +2,15 @@
 #include <vector>
 #include <string>
 #include <filesystem>
-#include "InputParser.h"
-#include "Execute.h"
-#include "cd.h"
-#include "pwd.h"
-#include "echo.h"
-#include "help.h"
+#include <unordered_map>
+#include <functional>
+
+#include "komande/InputParser.h"
+#include "komande/Execute.h"
+#include "komande/cd.h"
+#include "komande/pwd.h"
+#include "komande/echo.h"
+#include "komande/help.h"
 
 using namespace std;
 
@@ -20,6 +23,20 @@ string getPathFromhome()
 
 int main()
 {
+    vector<string> parsedInput;
+    const unordered_map<string, function<void()>> controls =
+    {
+        {"cd", [&](){changeDir(parsedInput.size()>1 ? parsedInput[1]:"");}},
+        {"pwd",[&](){printWorkingDirectory();}},
+        {"exite",[&](){exit(0);}},
+        {"echo", [&](){echoText(parsedInput.size()>1 ? listALL(parsedInput) : "");}},
+        {"help", [&](){help();}}
+
+    };
+
+
+
+
     while (true)
     {
         cout<<"[~/"<<getPathFromhome()<<"]^";
@@ -28,29 +45,13 @@ int main()
         string input;
         getline(cin,input);
 
+        parsedInput = parser(input);
 
-        vector<string> parsedInput = parser(input);
-        if (parsedInput[0] == "cd")
-        {
-            changeDir(parsedInput.size() > 1 ? parsedInput[1] : "");
-        }
-        if (parsedInput[0] == "pwd")
-        {
-            printWorkingDirectory();
-        }
 
-        if (parsedInput[0]=="exit")
+        auto it = controls.find(parsedInput[0]);
+        if (it !=controls.end())
         {
-            exit(0);
-        }
-        if (parsedInput[0]=="echo")
-        {
-            echoText(parsedInput.size()>1 ? parsedInput[1]:"");
-        }
-
-        if (parsedInput[0]=="help")
-        {
-            help();
+            it->second();
         }
 
         else
