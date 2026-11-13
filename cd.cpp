@@ -13,7 +13,7 @@ void changeDir(string givenPath)
 
     if (givenPath ==".")
     {
-        return;
+        newPath = filesystem::current_path();
     }
     else if (givenPath=="..")
     {
@@ -21,17 +21,18 @@ void changeDir(string givenPath)
     }
     else
     {
-        newPath = filesystem::absolute(givenPath);
-        return;
+        newPath = givenPath;
     }
     if (newPath.empty())
     {
-        cerr<<"cd: No parent directory.\n";
-        return;
-    }
-    if (chdir(newPath.c_str()) != 0)
-    {
-        perror("cd");
+        cerr<<"cd: No directory is given.\n";
+
     }
 
+    error_code ec;
+    filesystem::current_path(newPath,ec);
+    if (ec)
+    {
+     cerr<<"cd: "<< ec.message()<<"\n";
+    }
 }
