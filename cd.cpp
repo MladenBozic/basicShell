@@ -4,7 +4,6 @@
 
 #include "cd.h"
 #include <filesystem>
-#include <unistd.h>
 #include <iostream>
 
 void changeDir(string givenPath)
